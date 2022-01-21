@@ -4,7 +4,7 @@
 
 我们为什么需要事件循环？对于 JavaScript 是一门单线程语言我们是肯定的，JavaScript 单线程的特性保证了渲染和 JavaScript 的正常运行，但同时也存在一定的限制。理想情况下我们希望所有任务是串行执行的，假设串行中存在一个耗时很多的任务时，会阻塞后续任务的运行，这种情况我们怎么去解决呢？这个时候就需要我们的事件循环来处理了。
 
-![Untitled](%E5%9F%BA%E4%BA%8E%20Performace%20%E5%88%86%E6%9E%90%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%20a380f057b99b4fdbbf568f7246c9328d/Untitled.png)
+![事件循环](./../assets/javaScript/Untitled3.png)
 
 ## 让人意外的setTimeout
 
