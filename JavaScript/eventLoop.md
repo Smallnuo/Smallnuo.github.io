@@ -4,7 +4,7 @@
 
 我们为什么需要事件循环？对于 JavaScript 是一门单线程语言我们是肯定的，JavaScript 单线程的特性保证了渲染和 JavaScript 的正常运行，但同时也存在一定的限制。理想情况下我们希望所有任务是串行执行的，假设串行中存在一个耗时很多的任务时，会阻塞后续任务的运行，这种情况我们怎么去解决呢？这个时候就需要我们的事件循环来处理了。
 
-![事件循环](./../assets/javaScript/Untitled3.png)
+![事件循环](./../assets/javaScript/Untitled.png)
 
 ## 让人意外的setTimeout
 
@@ -25,9 +25,9 @@ for (let i = 0; i < 5000; i++) {
 console.log(3);
 ```
 
-猜猜上面这段代码执行结果是多少呢？根据 Event Loop 机制我们知道答案是1、3、2。但是针对这段代码中有一个疑问点，0ms 是指 0ms 后执行 callback 吗？答案是否定的，定时器任务被维护在定时器线程中，添加一个定时器时开始计时这个任务，0ms 后会将 callback 添加到事件队列中，如果在事件队列中存在 long Task，定时器的 callback 将等待执行，查看Performance执行过程：
+猜猜上面这段代码执行结果是多少呢？根据 Event Loop 机制我们知道答案是1、3、2。但是针对这段代码中有一个疑问点，0ms 是指 0ms 后执行 callback 吗？答案是否定的，定时器任务被维护在定时器线程中，添加一个定时器时开始计时这个任务，0ms 后会将 callback 添加到事件队列中，如果在事件队列中存在 long Task，定时器的 callback 将等待执行，查看 Performance 执行过程：
 
-![Untitled](%E5%9F%BA%E4%BA%8E%20Performace%20%E5%88%86%E6%9E%90%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%20a380f057b99b4fdbbf568f7246c9328d/Untitled%201.png)
+![setTimeout](./../assets/javaScript/Untitled1.png)
 
 ## 宏任务与微任务
 
@@ -46,11 +46,11 @@ setTimeout(timerCallback,0);
 
 我们希望通过 setTimeout 按照顺序执行 callback，通过 Performance 发现，在两个任务中间插入了其他任务，如果插入任务是 long task，会影响后续任务的执行。宏任务是浏览器提供给我们的Web Api，时间颗粒度较大，针对像 DOM 等高实时性操作是不太符合的。
 
-![Untitled](%E5%9F%BA%E4%BA%8E%20Performace%20%E5%88%86%E6%9E%90%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%20a380f057b99b4fdbbf568f7246c9328d/Untitled%202.png)
+![嵌套调用setTimeout](./../assets/javaScript/Untitled2.png)
 
  为了满足这种高优先级的任务，V8 引擎在创建全局执行上下文时会在内部创建一个微任务队列，在当前宏任务执行完成时去检查微任务队列，我们把执行微任务的时间点叫检查点。了解了微任务队列后，我们丰富一下之前的 Event Loop。
 
-![Untitled](%E5%9F%BA%E4%BA%8E%20Performace%20%E5%88%86%E6%9E%90%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%20a380f057b99b4fdbbf568f7246c9328d/Untitled%203.png)
+![宏任务微任务](./../assets/javaScript/Untitled3.png)
 
 ```js
 console.log(1)
@@ -67,11 +67,11 @@ console.log(4)
 
 浏览器按照帧渲染方式一帧一帧渲染网页，但并不是每一帧都会经历管道每个部分的处理。当脚本执行阻塞时会导致后续渲染流畅阻塞，页面卡顿。
 
-![Untitled](%E5%9F%BA%E4%BA%8E%20Performace%20%E5%88%86%E6%9E%90%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%20a380f057b99b4fdbbf568f7246c9328d/Untitled%204.png)
+![渲染管道](./../assets/javaScript/Untitled4.png)
 
 浏览器何时渲染对于我们来说就是一个黑盒，浏览器自身会去判断当前是否需要进行渲染，因此性能优化的是管道帧的流水过程，比如减少脚本执行时长，避免重绘、重排。如果你希望在每轮事件循环中都能变动，你需要去了解一下 requestAnimationFrame。
 
-![Untitled](%E5%9F%BA%E4%BA%8E%20Performace%20%E5%88%86%E6%9E%90%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%20a380f057b99b4fdbbf568f7246c9328d/Untitled%205.png)
+![事件循环与渲染](./../assets/javaScript/Untitled5.png)
 
 ```js
 <div id='con'>this is con</div>
@@ -96,7 +96,7 @@ con.onclick = function () {
 
 当两个宏任务耗时不足一帧时，会发生渲染合并现象：
 
-![Untitled](%E5%9F%BA%E4%BA%8E%20Performace%20%E5%88%86%E6%9E%90%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%20a380f057b99b4fdbbf568f7246c9328d/Untitled%206.png)
+![渲染合并](./../assets/javaScript/Untitled6.png)
 
 我们修改上诉代码如下，延长第二个宏任务执行时机：
 
@@ -122,7 +122,7 @@ con.onclick = function () {
 
 两个宏任务执行时间间隔 17ms ，按照代码逻辑宏任务执行完毕就进行渲染，并未发生渲染合并现象。
 
-![Untitled](%E5%9F%BA%E4%BA%8E%20Performace%20%E5%88%86%E6%9E%90%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%20a380f057b99b4fdbbf568f7246c9328d/Untitled%207.png)
+![](./../assets/javaScript/Untitled7.png)
 
 ## 事件循环之任务拆分
 
@@ -141,7 +141,7 @@ function count() {
 count();
 ```
 
-![Untitled](%E5%9F%BA%E4%BA%8E%20Performace%20%E5%88%86%E6%9E%90%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%20a380f057b99b4fdbbf568f7246c9328d/Untitled%208.png)
+![](./../assets/javaScript/Untitled8.png)
 
 我们希望这个 long Task 拆分成一个个小的任务，解决长时间阻塞造成的卡顿现象。我们可以利用 setTimeout 拆分我们的任务，修改代码如下，这个计算确实被拆分成了一个个小任务。React Firber架构中也使用了任务拆分这种思想将递归渲染 vdom 转为了链表可中断渲染 vdom，笔者对 Fiber了解并不多，这部分就不展开细说了。
 
@@ -162,7 +162,7 @@ function count() {
 count();
 ```
 
-![Untitled](%E5%9F%BA%E4%BA%8E%20Performace%20%E5%88%86%E6%9E%90%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%20a380f057b99b4fdbbf568f7246c9328d/Untitled%209.png)
+![](./../assets/javaScript/Untitled9.png)
 
 setTimeout 确实将任务进行了拆分处理，但仍占用了主线程资源，我们知道主线程保证了页面的渲染、脚本交互、布局等操作，上诉这种单纯的数据计算放在主线程处理是没有意义的，我们可以将耗时计算放在 Web Worker 中处理。  
 
@@ -171,13 +171,13 @@ setTimeout 确实将任务进行了拆分处理，但仍占用了主线程资源
 - 什么是 Web Worker?
 
 <aside>
-💡 当在 HTML 页面中执行脚本时，页面的状态是不可响应的，直到脚本已完成。web worker 是运行在后台的 JavaScript，独立于其他脚本，不会影响页面的性能。您可以继续做任何愿意做的事情：点击、选取内容等等，而此时 web worker 在后台运行。
+当在 HTML 页面中执行脚本时，页面的状态是不可响应的，直到脚本已完成。web worker 是运行在后台的 JavaScript，独立于其他脚本，不会影响页面的性能。您可以继续做任何愿意做的事情：点击、选取内容等等，而此时 web worker 在后台运行。
 
 </aside>
 
 - Web Worker 工作原理
     
-    ![Untitled](%E5%9F%BA%E4%BA%8E%20Performace%20%E5%88%86%E6%9E%90%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%20a380f057b99b4fdbbf568f7246c9328d/Untitled%2010.png)
+    ![](./../assets/javaScript/Untitled10.png)
     
 - Web Worker 改变了 JavaScript 单线程执行这一本质了吗？
 
@@ -206,7 +206,7 @@ worker.onmessage = (e) => {
 }
 ```
 
-![Untitled](%E5%9F%BA%E4%BA%8E%20Performace%20%E5%88%86%E6%9E%90%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%20a380f057b99b4fdbbf568f7246c9328d/Untitled%2011.png)
+![Untitled](./../assets/javaScript/Untitled11.png)
 
 ## 总结
 
