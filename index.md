@@ -2,3 +2,4 @@
 ### JavaScript
 [基于 Performace 分析事件循环](./javaScript/eventLoop.md)
 
+[浏览器渲染流程](./browser/render.md)
